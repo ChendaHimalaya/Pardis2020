@@ -7,7 +7,8 @@ public class QuicksortExecutorService {
     final ExecutorService pool = Executors.newCachedThreadPool();
 
     QuicksortExecutorService(int[] dataArray) {
-        new Quicksort(dataArray,0,dataArray.length - 1).run();
+        new Quicksort(dataArray, 0, dataArray.length - 1).run();
+        pool.shutdown();
     }
 
     static void swap(int[] dataArray, int i, int j) {
@@ -46,7 +47,7 @@ public class QuicksortExecutorService {
             if (low < high) {
                 int pivotIndex = partition(dataArray, low, high);
                 tasks[0] = pool.submit(new Quicksort(dataArray, low, pivotIndex - 1));
-                tasks[1] = pool.submit(new Quicksort(dataArray,pivotIndex + 1, high));
+                tasks[1] = pool.submit(new Quicksort(dataArray, pivotIndex + 1, high));
                 // Wait for sub arrays to become sorted
                 for (Future<?> t : tasks) {
                     try {

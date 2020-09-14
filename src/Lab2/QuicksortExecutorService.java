@@ -1,6 +1,5 @@
 package Lab2;
 
-import java.util.Random;
 import java.util.concurrent.*;
 
 public class QuicksortExecutorService {
@@ -60,20 +59,8 @@ public class QuicksortExecutorService {
         }
     }
 
-    public static void main(String[] args) {
-        int N = 100;
-
-        Random rd = new Random();
-        int[] dataArray = new int[N];
-        for (int i = 0; i < N; i++) {
-            dataArray[i] = rd.nextInt();
-        }
-
+    public static void main(int[] dataArray) {
         new QuicksortExecutorService(dataArray);
-
-        for (int i : dataArray) {
-            System.out.println(i);
-        }
     }
 
 }

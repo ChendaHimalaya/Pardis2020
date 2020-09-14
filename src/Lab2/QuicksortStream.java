@@ -13,8 +13,6 @@ public class QuicksortStream {
                 Stream.of(dataArray.get(0))),
                 quicksort(dataArray.parallelStream().skip(1).filter(x->x>dataArray.get(0)).collect(Collectors.toList())).parallelStream())
                 .collect(Collectors.toList());
-
-
     }
 
 }

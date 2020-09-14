@@ -28,22 +28,22 @@ public class Main {
         startTime = System.nanoTime();
         QuicksortSequential.main(clone1);
         endTime = System.nanoTime();
-        System.out.println("QuicksortSequential took " + (endTime - startTime) + " ms");
+        System.out.println("QuicksortSequential took " + (endTime - startTime) / 1000000 + " ms");
 
         startTime = System.nanoTime();
         QuicksortExecutorService.main(clone2);
         endTime = System.nanoTime();
-        System.out.println("QuicksortExecutorService took " + (endTime - startTime) + " ms");
+        System.out.println("QuicksortExecutorService took " + (endTime - startTime) / 1000000 + " ms");
 
         startTime = System.nanoTime();
         QuicksortForkJoin.main(clone3);
         endTime = System.nanoTime();
-        System.out.println("QuicksortForkJoin took " + (endTime - startTime) + " ms");
+        System.out.println("QuicksortForkJoin took " + (endTime - startTime) / 1000000 + " ms");
 
         startTime = System.nanoTime();
         dataList = QuicksortStream.quicksort(dataList);
         endTime = System.nanoTime();
-        System.out.println("QuicksortStream took " + (endTime - startTime) + " ms");
+        System.out.println("QuicksortStream took " + (endTime - startTime) / 1000000 + " ms");
 
         if (dataArray.length < 101) {
             System.out.println(Arrays.toString(clone1));

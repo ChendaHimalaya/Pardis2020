@@ -17,7 +17,7 @@ public class Main {
 
 
     public static void main(String[] arg) {
-        int[] dataArray = generateRandomList(1000000);
+        int[] dataArray = generateRandomList(10000000);
         int[] clone1 = dataArray.clone();
         int[] clone2 = dataArray.clone();
         int[] clone3 = dataArray.clone();
@@ -29,7 +29,7 @@ public class Main {
         QuicksortSequential.main(clone1);
         endTime = System.nanoTime();
         System.out.println("QuicksortSequential took " + (endTime - startTime) / 1000000 + " ms");
-
+        
         startTime = System.nanoTime();
         QuicksortExecutorService.main(clone2);
         endTime = System.nanoTime();
@@ -40,10 +40,12 @@ public class Main {
         endTime = System.nanoTime();
         System.out.println("QuicksortForkJoin took " + (endTime - startTime) / 1000000 + " ms");
 
+        /* WARNING QuicksortStream is very slow
         startTime = System.nanoTime();
         dataList = QuicksortStream.quicksort(dataList);
         endTime = System.nanoTime();
         System.out.println("QuicksortStream took " + (endTime - startTime) / 1000000 + " ms");
+         */
 
         if (dataArray.length < 101) {
             System.out.println(Arrays.toString(clone1));

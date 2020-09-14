@@ -3,7 +3,9 @@ package Lab2;
 import java.util.concurrent.*;
 
 public class QuicksortExecutorService {
+    final int n = Runtime.getRuntime().availableProcessors();
     final ExecutorService pool = Executors.newCachedThreadPool();
+    int poolSize = 0;
 
     QuicksortExecutorService(int[] dataArray) {
         new Quicksort(dataArray, 0, dataArray.length - 1).run();
@@ -45,15 +47,22 @@ public class QuicksortExecutorService {
             Future<?>[] tasks = new Future[2];
             if (low < high) {
                 int pivotIndex = partition(dataArray, low, high);
-                tasks[0] = pool.submit(new Quicksort(dataArray, low, pivotIndex - 1));
-                tasks[1] = pool.submit(new Quicksort(dataArray, pivotIndex + 1, high));
-                // Wait for sub arrays to become sorted
-                for (Future<?> t : tasks) {
-                    try {
-                        t.get();
-                    } catch (InterruptedException | ExecutionException e) {
-                        e.printStackTrace();
+                if (poolSize < n) {
+                    tasks[0] = pool.submit(new Quicksort(dataArray, low, pivotIndex - 1));
+                    tasks[1] = pool.submit(new Quicksort(dataArray, pivotIndex + 1, high));
+                    poolSize++;
+                    // Wait for sub arrays to become sorted
+                    for (Future<?> t : tasks) {
+                        try {
+                            t.get();
+                        } catch (InterruptedException | ExecutionException e) {
+                            e.printStackTrace();
+                        }
                     }
+                    poolSize--;
+                } else {
+                    QuicksortSequential.quickSort(dataArray, low, pivotIndex - 1);
+                    QuicksortSequential.quickSort(dataArray, pivotIndex + 1, high);
                 }
             }
         }

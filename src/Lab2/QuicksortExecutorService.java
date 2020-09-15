@@ -47,7 +47,7 @@ public class QuicksortExecutorService {
             Future<?>[] tasks = new Future[2];
             if (low < high) {
                 int pivotIndex = partition(dataArray, low, high);
-                if (poolSize < n) {
+                if (poolSize < n && high - low > 1000000) {
                     tasks[0] = pool.submit(new Quicksort(dataArray, low, pivotIndex - 1));
                     tasks[1] = pool.submit(new Quicksort(dataArray, pivotIndex + 1, high));
                     poolSize++;

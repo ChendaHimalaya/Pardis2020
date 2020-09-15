@@ -5,9 +5,10 @@ import java.util.concurrent.*;
 public class QuicksortExecutorService {
     final int n = Runtime.getRuntime().availableProcessors();
     final ExecutorService pool = Executors.newCachedThreadPool();
-    int poolSize = 0;
+    int poolSize;
 
     QuicksortExecutorService(int[] dataArray) {
+        poolSize++;
         new Quicksort(dataArray, 0, dataArray.length - 1).run();
         pool.shutdown();
     }
@@ -59,12 +60,12 @@ public class QuicksortExecutorService {
                             e.printStackTrace();
                         }
                     }
-                    poolSize--;
                 } else {
                     QuicksortSequential.quickSort(dataArray, low, pivotIndex - 1);
                     QuicksortSequential.quickSort(dataArray, pivotIndex + 1, high);
                 }
             }
+            poolSize--;
         }
     }
 

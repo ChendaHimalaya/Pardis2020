@@ -1,4 +1,4 @@
-import Lab2.*;
+package Lab2;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,7 +14,6 @@ public class Main {
         }
         return ret;
     }
-
 
     public static void main(String[] arg) {
         int[] dataArray = generateRandomList(10000000);

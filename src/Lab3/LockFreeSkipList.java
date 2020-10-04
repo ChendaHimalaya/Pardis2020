@@ -1,6 +1,7 @@
 package Lab3;
 
 import java.util.concurrent.atomic.AtomicMarkableReference;
+import java.util.function.Consumer;
 
 import static Lab3.Main.randomLevel;
 
@@ -168,5 +169,9 @@ public final class LockFreeSkipList<T> {
             }
         }
         return (curr.key == v);
+    }
+
+    public void forEach(Consumer<? super T> action) {
+        // TODO
     }
 }

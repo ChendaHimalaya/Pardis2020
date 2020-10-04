@@ -1,11 +1,11 @@
 package Lab3;
 
+import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicMarkableReference;
-import java.util.function.Consumer;
 
 import static Lab3.Main.randomLevel;
 
-public final class LockFreeSkipList<T> {
+public final class LockFreeSkipList<T> implements Iterable<T> {
     static final int MAX_LEVEL = 31;
     final Node<T> head = new Node<>(Integer.MIN_VALUE);
     final Node<T> tail = new Node<>(Integer.MAX_VALUE);
@@ -171,7 +171,25 @@ public final class LockFreeSkipList<T> {
         return (curr.key == v);
     }
 
-    public void forEach(Consumer<? super T> action) {
-        // TODO
+    private class LockFreeSkipListIterator implements Iterator<T> {
+        private Node<T> curr = head;
+        private Node<T> next = curr.next[0].getReference();
+
+        @Override
+        public boolean hasNext() {
+            return next.value != null;
+        }
+
+        @Override
+        public T next() {
+            curr = next;
+            next = curr.next[0].getReference();
+            return curr.value;
+        }
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new LockFreeSkipListIterator();
     }
 }

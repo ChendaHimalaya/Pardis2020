@@ -1,6 +1,7 @@
 package Lab3;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -13,7 +14,7 @@ public class Test1 {
      */
     void generateUniform(LockFreeSkipList<Integer> set, int N, int range) {
         for (int i = 0; i < N; i++) {
-            set.add(ThreadLocalRandom.current().nextInt(-range/2, range/2 + 1));
+            set.add(ThreadLocalRandom.current().nextInt(-range / 2, range / 2 + 1));
         }
     }
 
@@ -25,8 +26,8 @@ public class Test1 {
         int r;
         for (int i = 0; i < N; i++) {
             while (true) {
-                r = (int) Math.round(ThreadLocalRandom.current().nextGaussian() * range/8);
-                if (r >= -range/2 && r <= range/2) {
+                r = (int) Math.round(ThreadLocalRandom.current().nextGaussian() * range / 8);
+                if (r >= -range / 2 && r <= range / 2) {
                     set.add(r);
                     break;
                 }
@@ -34,25 +35,28 @@ public class Test1 {
         }
     }
 
-    void verifyDistribution(long[] a, double mean, double var) {
-        double meanCalc = Arrays.stream(a).parallel().sum() / (double) a.length;
-        System.out.println("mean: " + mean + " meanCalc: " + meanCalc);
-        double varCalc = Arrays.stream(a).parallel().map(i -> (long) ((i-mean)*(i-mean))).sum() / (double) a.length;
-        System.out.println("var: " + var + " varCalc: " + varCalc);
+    void verifyDistribution(LockFreeSkipList<Integer> set, double mean, double var) {
+        int size = 0;
+        long sum = 0, varSum = 0;
+        for (int i : set) {
+            size++;
+            sum += i;
+            varSum += (i - mean) * (i - mean);
+        }
+        System.out.println("mean: " + mean + " meanCalc: " + (double) sum / size);
+        System.out.println("var: " + var + " varCalc: " + (double) varSum / size);
     }
 
     Test1(int N) {
         LockFreeSkipList<Integer> uniform = new LockFreeSkipList<>();
         LockFreeSkipList<Integer> gaussian = new LockFreeSkipList<>();
-        int range = 10000;
 
+        int range = 10000;
         generateUniform(uniform, N, range);
         generateGaussian(gaussian, N, range);
 
-        /*
-        verifyDistribution(uniform, 0, range*range/12.0);
+        verifyDistribution(uniform, 0, range * (range + 2) / 12.0);
         System.out.println();
-        verifyDistribution(gaussian, 0, range*range/64.0);
-        */
+        verifyDistribution(gaussian, 0, range * range / 64.0);
     }
 }

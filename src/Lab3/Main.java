@@ -16,7 +16,7 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        int N = 10000;
+        int N = 10000000;
         new Test1(N);
     }
 }

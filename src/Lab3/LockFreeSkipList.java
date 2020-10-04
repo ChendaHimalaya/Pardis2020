@@ -152,7 +152,7 @@ public final class LockFreeSkipList<T> {
         boolean[] marked = {false};
         Node<T> pred = head, curr = null, succ;
         for (int level = MAX_LEVEL; level >= bottomLevel; level--) {
-            curr = curr.next[level].getReference();
+            curr = pred.next[level].getReference();
             while (true) {
                 succ = curr.next[level].get(marked);
                 while (marked[0]) {

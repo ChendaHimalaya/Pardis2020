@@ -3,8 +3,10 @@ package Lab2;
 import java.util.concurrent.*;
 
 public class QuicksortExecutorService {
-    final int n = Runtime.getRuntime().availableProcessors();
-    final ExecutorService pool = Executors.newCachedThreadPool();
+    //final int n = Runtime.getRuntime().availableProcessors();
+    final int n=4;
+    //final ExecutorService pool = Executors.newCachedThreadPool();
+    final ExecutorService pool = Executors.newFixedThreadPool(n);
     int poolSize;
 
     QuicksortExecutorService(int[] dataArray) {

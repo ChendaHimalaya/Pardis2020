@@ -1,7 +1,5 @@
 package Lab3;
 
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**

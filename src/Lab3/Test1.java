@@ -37,26 +37,27 @@ public class Test1 {
 
     void verifyDistribution(LockFreeSkipList<Integer> set, double mean, double var) {
         int size = 0;
-        long sum = 0, varSum = 0;
-        for (int i : set) {
+        double meanCalc = 0, varCalc = 0;
+        for (int ignored : set)
             size++;
-            sum += i;
-            varSum += (i - mean) * (i - mean);
+        for (double i : set) {
+            meanCalc += i / size;
+            varCalc += ((i - mean) * (i - mean)) / size;
         }
-        System.out.println("mean: " + mean + " meanCalc: " + (double) sum / size);
-        System.out.println("var: " + var + " varCalc: " + (double) varSum / size);
+        System.out.println("mean: " + mean + " meanCalc: " + meanCalc);
+        System.out.println("var: " + var + " varCalc: " + varCalc);
     }
 
     Test1(int N) {
         LockFreeSkipList<Integer> uniform = new LockFreeSkipList<>();
         LockFreeSkipList<Integer> gaussian = new LockFreeSkipList<>();
 
-        int range = 10000;
+        int range = 10000000;
         generateUniform(uniform, N, range);
         generateGaussian(gaussian, N, range);
 
-        verifyDistribution(uniform, 0, range * (range + 2) / 12.0);
+        verifyDistribution(uniform, 0.0, (double) range * (range + 2) / 12.0);
         System.out.println();
-        verifyDistribution(gaussian, 0, range * range / 64.0);
+        verifyDistribution(gaussian, 0.0, (double) range * range / 64.0);
     }
 }

@@ -17,6 +17,7 @@ public class Main {
 
     public static void main(String[] args) {
         int N = 10000000;
-        new Test1(N);
+        Tester tester=new Tester(N,100000,true);
+        tester.testTask3(2,100000,0.2,0.2,0.6);
     }
 }

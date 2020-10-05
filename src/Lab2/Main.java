@@ -46,6 +46,7 @@ public class Main {
         System.out.println("QuicksortStream took " + (endTime - startTime) / 1000000 + " ms");
          */
 
+
         if (dataArray.length < 101) {
             System.out.println(Arrays.toString(clone1));
             System.out.println(Arrays.toString(clone2));

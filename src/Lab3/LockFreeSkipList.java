@@ -157,7 +157,7 @@ public final class LockFreeSkipList<T> implements Iterable<T> {
             while (true) {
                 succ = curr.next[level].get(marked);
                 while (marked[0]) {
-                    curr = pred.next[level].getReference();
+                    curr = succ;
                     succ = curr.next[level].get(marked);
                 }
                 if (curr.key < v) {

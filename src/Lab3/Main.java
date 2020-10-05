@@ -16,8 +16,8 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        int N = 10000000;
-        Tester tester=new Tester(N,100000,true);
-        tester.testTask3(2,100000,0.2,0.2,0.6);
+        int N = 1000;
+        TesterGlobalLock tester = new TesterGlobalLock(2, N, 100000, true);
+        tester.runThreads(0.5, 0.25, 0.25);
     }
 }

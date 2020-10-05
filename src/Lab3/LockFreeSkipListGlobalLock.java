@@ -1,6 +1,9 @@
 package Lab3;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicMarkableReference;
 
@@ -13,7 +16,7 @@ public class LockFreeSkipListGlobalLock<T> implements Iterable<T> {
     static final int MAX_LEVEL = 31;
     final Node<T> head = new Node<>(Integer.MIN_VALUE);
     final Node<T> tail = new Node<>(Integer.MAX_VALUE);
-    final ConcurrentLinkedQueue<LogEntry> log = new ConcurrentLinkedQueue<>();
+    final ConcurrentLinkedQueue<LogEntry<T>> log = new ConcurrentLinkedQueue<>();
 
     public LockFreeSkipListGlobalLock() {
         for (int i = 0; i < head.next.length; i++) {
@@ -83,7 +86,7 @@ public class LockFreeSkipListGlobalLock<T> implements Iterable<T> {
                         find(x, preds, succs, null);
                     }
                 }
-                log.add(new LogEntry(Thread.currentThread().getId(), "add(" + x + "): true", timeStamp));
+                log.add(new LogEntry<>(Thread.currentThread().getId(), "add", x, true, timeStamp));
                 return true;
             }
         }
@@ -119,10 +122,10 @@ public class LockFreeSkipListGlobalLock<T> implements Iterable<T> {
                     succ = succs[bottomLevel].next[bottomLevel].get(marked);
                     if (iMarkedIt) {
                         find(x, preds, succs, null);
-                        log.add(new LogEntry(Thread.currentThread().getId(), "remove(" + x + "): true", timeStamp));
+                        log.add(new LogEntry<>(Thread.currentThread().getId(), "remove", x, true, timeStamp));
                         return true;
                     } else if (marked[0]) {
-                        log.add(new LogEntry(Thread.currentThread().getId(), "remove(" + x + "): false", timeStamp));
+                        log.add(new LogEntry<>(Thread.currentThread().getId(), "remove", x, false, timeStamp));
                         return false;
                     }
                 }
@@ -168,9 +171,9 @@ public class LockFreeSkipListGlobalLock<T> implements Iterable<T> {
             }
             if (caller != null) {
                 if (curr.key == key && caller.equals("add"))
-                    log.add(new LogEntry(Thread.currentThread().getId(), "add(" + x + "): false", timeStamp));
+                    log.add(new LogEntry<>(Thread.currentThread().getId(), "add", x, false, timeStamp));
                 else if (curr.key != key && caller.equals("remove"))
-                    log.add(new LogEntry(Thread.currentThread().getId(), "remove(" + x + "): false", timeStamp));
+                    log.add(new LogEntry<>(Thread.currentThread().getId(), "remove", x, false, timeStamp));
             }
             return curr.key == key;
         }
@@ -205,10 +208,69 @@ public class LockFreeSkipListGlobalLock<T> implements Iterable<T> {
             }
         }
         if (curr.key == v)
-            log.add(new LogEntry(Thread.currentThread().getId(), "contains(" + x + "): true", timeStamp));
+            log.add(new LogEntry<>(Thread.currentThread().getId(), "contains", x, true, timeStamp));
         else
-            log.add(new LogEntry(Thread.currentThread().getId(), "contains(" + x + "): false", timeStamp));
+            log.add(new LogEntry<>(Thread.currentThread().getId(), "contains", x, false, timeStamp));
         return (curr.key == v);
+    }
+
+    boolean verifyLog() {
+        List<LogEntry<T>> logList = new ArrayList<>(log);
+        Collections.sort(logList);
+        LogEntry<T> entry1;
+        LogEntry<T> entry2 = null;
+        for (int i = logList.size() - 1; i > -1; i--) {
+            entry1 = logList.get(i);
+            if ((entry1.op.equals("remove") || entry1.op.equals("contains"))) {
+                if (entry1.ret) {
+                    for (int j = i - 1; j > -1; j--) {
+                        entry2 = logList.get(j);
+                        if (entry2.op.equals("add") && entry2.val == entry1.val && entry2.ret) break;
+                        if (entry2.op.equals("remove") && entry2.val == entry1.val && entry2.ret) return false;
+                    }
+                    assert entry2 != null;
+                    if (!(entry2.op.equals("add") && entry2.val == entry1.val && entry2.ret)) {
+                        // BUG HERE
+                        System.out.println(logList.get(0));
+                        System.out.println(entry1);
+                        System.out.println(entry2);
+                        return false;
+                    }
+                    ;
+                } else {
+                    for (int j = i - 1; j > -1; j--) {
+                        entry2 = logList.get(j);
+                        if (entry2.op.equals("add") && entry2.val == entry1.val && entry2.ret) return false;
+                        if (entry2.op.equals("remove") && entry2.val == entry1.val && entry2.ret) break;
+                    }
+                }
+            } else if (entry1.op.equals("add")) {
+                if (entry1.ret) {
+                    for (int j = i - 1; j > -1; j--) {
+                        entry2 = logList.get(j);
+                        if (entry2.op.equals("add") && entry2.val == entry1.val && entry2.ret) return false;
+                        if (entry2.op.equals("remove") && entry2.val == entry1.val && entry2.ret) break;
+                        if (entry2.op.equals("contains") && entry2.val == entry1.val && entry2.ret) return false;
+                    }
+                } else {
+                    for (int j = i - 1; j > -1; j--) {
+                        entry2 = logList.get(j);
+                        if (entry2.op.equals("add") && entry2.val == entry1.val && entry2.ret) break;
+                        if (entry2.op.equals("remove") && entry2.val == entry1.val && entry2.ret) return false;
+                        if (entry2.op.equals("contains") && entry2.val == entry1.val && entry2.ret) return false;
+                    }
+                    assert entry2 != null;
+                    if (!(entry2.op.equals("add") && entry2.val == entry1.val && entry2.ret)) {
+                        // BUG HERE
+                        System.out.println(logList.get(0));
+                        System.out.println(entry1);
+                        System.out.println(entry2);
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     private class LockFreeSkipListIterator implements Iterator<T> {

@@ -4,8 +4,10 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Main {
 
-    // Return 0 with probability 3/4,
-    // otherwise return int in range 1-31 sampled from geometric distribution with p = 0.5
+    /**
+     * @return 0 with probability 3/4,
+     * otherwise int in range 1-31 sampled from geometric distribution with p = 0.5
+     */
     static int randomLevel() {
         if (ThreadLocalRandom.current().nextDouble() < 0.75) {
             return 0;
@@ -14,6 +16,7 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        // TODO
+        int N = 10000000;
+        new Test1(N);
     }
 }

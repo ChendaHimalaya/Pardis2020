@@ -110,8 +110,5 @@ public class TesterGlobalLock {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        if (set.verifyLog()) {
-            System.out.println("Log is sequentially valid");
-        }
     }
 }

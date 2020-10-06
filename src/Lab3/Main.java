@@ -38,9 +38,10 @@ public class Main {
 //            System.out.println("Number of Threads "+numThread+" with avg time"+calculate_avg(result));
 //        }
 
-        int N = 1000;
+        int N = 100000;
         TesterGlobalLock tester = new TesterGlobalLock(2, N, 100000, true);
         tester.runThreads(0.5, 0.25, 0.25);
-
+        if (tester.set.verifyLog())
+            System.out.println("Log is sequentially valid");
     }
 }

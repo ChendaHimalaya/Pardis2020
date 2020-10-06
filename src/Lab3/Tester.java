@@ -12,38 +12,34 @@ public class Tester{
 
 
     /**
-     * populate set with N integers in interval [-range/2, range/2] from uniform distribution
+     * @return integer in interval [-range/2, range/2] sampled from uniform distribution
      */
-    void generateUniform(LockFreeSkipList<Integer> set, int N, int range) {
-        for (int i = 0; i < N; i++) {
-            set.add(ThreadLocalRandom.current().nextInt(-range / 2, range / 2 + 1));
-        }
+    static int generateUniform(int range) {
+        return ThreadLocalRandom.current().nextInt(-range / 2, range / 2 + 1);
     }
 
     /**
-     * populate set with N integers in interval [-range/2, range/2] from gaussian distribution
+     * @return integer in interval [-range/2, range/2] sampled from gaussian distribution
      * with mean = 0 and std = range/8
      */
-    void generateGaussian(LockFreeSkipList<Integer> set, int N, int range) {
+    static int generateGaussian(int range) {
         int r;
-        for (int i = 0; i < N; i++) {
-            while (true) {
-                r = (int) Math.round(ThreadLocalRandom.current().nextGaussian() * range / 8);
-                if (r >= -range / 2 && r <= range / 2) {
-                    set.add(r);
-                    break;
-                }
+        while (true) {
+            r = (int) Math.round(ThreadLocalRandom.current().nextGaussian() * range / 8);
+            if (r >= -range / 2 && r <= range / 2) {
+                return r;
             }
         }
     }
 
     public Tester(int N, int range,boolean ifUniform){
-        if (ifUniform){
-            this.generateUniform(list,N,range);
+//        if (ifUniform){
+//            this.generateUniform(list,N,range);
+//
+//        }else{
+//            this.generateGaussian(list,N,range);
+//        }
 
-        }else{
-            this.generateGaussian(list,N,range);
-        }
         this.N=N;
         this.range=range;
 

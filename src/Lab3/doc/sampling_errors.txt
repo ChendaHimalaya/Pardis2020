@@ -1,0 +1,18 @@
+Sampling errors for LocalLog and MPSC versions 
+
+---LocalLog---
+example #1 (same time-stamps)
+5
+LogEntry{threadId=26, op='add', val=13332, ret=true, timeStamp=72515360403100}
+LogEntry{threadId=32, op='contains', val=13332, ret=true, timeStamp=72515360403100}
+
+example #2 (different time-stamps)
+5
+LogEntry{threadId=29, op='add', val=-34026, ret=true, timeStamp=72733323728900}
+LogEntry{threadId=31, op='contains', val=-34026, ret=true, timeStamp=72733323728600}
+
+---MPSC---
+example #1
+5
+LogEntry{threadId=21, op='add', val=52, ret=true, timeStamp=73019356237900}
+LogEntry{threadId=20, op='contains', val=52, ret=true, timeStamp=73019356237800}

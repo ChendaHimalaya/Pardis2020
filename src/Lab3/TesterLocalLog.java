@@ -99,7 +99,7 @@ public class TesterLocalLog {
         }
     }
 
-    public void runThreads(double addPercent, double removePercent, double containsPercent) {
+    public long runThreads(double addPercent, double removePercent, double containsPercent) {
         int addOps = (int) (N * addPercent / nThreads);
         int removeOps = (int) (N * removePercent / nThreads);
         int containsOps = (int) (N * containsPercent / nThreads);
@@ -107,6 +107,7 @@ public class TesterLocalLog {
         for (int i = 0; i < nThreads; i++) {
             opsList[i] = generateOperations(addOps + removeOps + containsOps, addOps, removeOps, containsOps);
         }
+        long startTime = System.nanoTime();
         for (int i = 0; i < nThreads; i++) {
             pool.submit(new Task(opsList[i]));
         }
@@ -116,11 +117,7 @@ public class TesterLocalLog {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        Collections.sort(globalLog);
-        if (set.verifyLog(globalLog)) {
-            System.out.println("Log is sequentially valid");
-        } else {
-            System.out.println("Log is not sequentially valid");
-        }
+        long endTime = System.nanoTime();
+        return (endTime - startTime) / 1000000;
     }
 }

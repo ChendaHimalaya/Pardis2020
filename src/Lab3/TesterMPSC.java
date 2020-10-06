@@ -104,7 +104,7 @@ public class TesterMPSC {
         }
     }
 
-    public void runThreads(double addPercent, double removePercent, double containsPercent) {
+    public long runThreads(double addPercent, double removePercent, double containsPercent) {
         int addOps = (int) (N * addPercent / nThreads);
         int removeOps = (int) (N * removePercent / nThreads);
         int containsOps = (int) (N * containsPercent / nThreads);
@@ -112,6 +112,7 @@ public class TesterMPSC {
         for (int i = 0; i < nThreads; i++) {
             opsList[i] = generateOperations(addOps + removeOps + containsOps, addOps, removeOps, containsOps);
         }
+        long startTime = System.nanoTime();
         for (int i = 0; i < nThreads; i++) {
             pool.submit(new Task(opsList[i]));
         }
@@ -132,17 +133,8 @@ public class TesterMPSC {
         {
             Thread.currentThread().interrupt();
         }
-        queue.offer(new LogEntry<Integer>(Thread.currentThread().getId(),null,null,false,-1));
-
-
-        //Collections.sort(globalLog);
-//        for (LogEntry<Integer> item:globalLog){
-//            System.out.println(item);
-//        }
-        if (set.verifyLog(globalLog)) {
-            System.out.println("Log is sequentially valid");
-        }else{
-            System.out.println("Log is not sequentially valid");
-        }
+        queue.offer(new LogEntry<>(Thread.currentThread().getId(),null,null,false,-1));
+        long endTime = System.nanoTime();
+        return (startTime - endTime) / 1000000;
     }
 }

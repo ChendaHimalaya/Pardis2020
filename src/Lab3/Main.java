@@ -46,22 +46,20 @@ public class Main {
 //        int N = 100000;
 //        TesterLocalLog tester = new TesterLocalLog(4, N, 100000, true);
 //        tester.runThreads(0.5, 0.25, 0.25);
-        int N = 100000;
-        TesterMPSC tester = new TesterMPSC(2, N, 100000, true);
-        tester.runThreads(0.5, 0.25, 0.25);
 
-//        int N = 10000000;
-//        long[] result;
-//        int range = 10000000;
-//        int[] nThreads = new int[]{2, 12, 30, 46};
-//        for (int nThread : nThreads) {
-//            result = new long[10];
-//            for (int i = 0; i < 10; i++) {
-//                TesterGlobalLock tester = new TesterGlobalLock(nThread, N, range, true);
-//                result[i] = tester.runThreads(0.5, 0.4, 0.1);
-//            }
-//            System.out.println("Number of Threads " + nThread + " with avg time" + calculate_avg(result));
-//        }
-
+        int N = 10000000;
+        long[] result;
+        int range = 10000000;
+        int[] nThreads = new int[]{2, 12, 30, 46};
+        for (int nThread : nThreads) {
+            result = new long[10];
+            for (int i = 0; i < 10; i++) {
+                TesterLocalLog tester = new TesterLocalLog(nThread, N, range, true);
+                result[i] = tester.runThreads(0.5, 0.25, 0.25);
+                // TesterMPSC tester = new TesterMPSC(nThread, N, range, true);
+                // result[i] = tester.runThreads(0.5, 0.25, 0.25);
+            }
+            System.out.println("Number of Threads " + nThread + " with avg time" + calculate_avg(result));
+        }
     }
 }

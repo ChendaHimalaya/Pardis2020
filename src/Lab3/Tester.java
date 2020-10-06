@@ -82,7 +82,7 @@ public class Tester{
         }
     }
 
-    public void testTask3(int numThreads,int numOps, double addPercent, double removePercent, double containsPercent){
+    public long testTask3(int numThreads,int numOps, double addPercent, double removePercent, double containsPercent){
         Thread[] threads=new Thread[numThreads];
         int addOps=(int) (numOps*addPercent/numThreads);
         int removeOps=(int)(numOps*removePercent/numThreads);
@@ -91,7 +91,9 @@ public class Tester{
         for (int i=0;i<numThreads;i++){
             opsList[i]=generateOperations(addOps+removeOps+containsOps,addOps,removeOps,containsOps);
         }
+        long time=System.currentTimeMillis();
         for (int i =0; i<numThreads;i++){
+
             threads[i]=new Thread(new myThreads(opsList[i]));
 
             threads[i].start();
@@ -103,6 +105,10 @@ public class Tester{
                 e.printStackTrace();
             }
         }
+        long time_used=System.currentTimeMillis()-time;
+        System.out.println("Time used was"+time_used);
+        return time_used;
+
 
 
     }

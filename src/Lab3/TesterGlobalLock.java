@@ -93,7 +93,7 @@ public class TesterGlobalLock {
         }
     }
 
-    public void runThreads(double addPercent, double removePercent, double containsPercent) {
+    public long runThreads(double addPercent, double removePercent, double containsPercent) {
         int addOps = (int) (N * addPercent / nThreads);
         int removeOps = (int) (N * removePercent / nThreads);
         int containsOps = (int) (N * containsPercent / nThreads);
@@ -101,6 +101,7 @@ public class TesterGlobalLock {
         for (int i = 0; i < nThreads; i++) {
             opsList[i] = generateOperations(addOps + removeOps + containsOps, addOps, removeOps, containsOps);
         }
+        long startTime = System.nanoTime();
         for (int i = 0; i < nThreads; i++) {
             pool.submit(new Task(opsList[i]));
         }
@@ -110,5 +111,7 @@ public class TesterGlobalLock {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        long endTime = System.nanoTime();
+        return (endTime - startTime) / 1000000;
     }
 }

@@ -15,33 +15,28 @@ public class Main {
         return Math.min(1 + (int) Math.floor(Math.log(ThreadLocalRandom.current().nextDouble()) / Math.log(0.5)), 31);
     }
 
-    static long calculate_avg(long [] list){
-        long sum=0;
-        for (int i=0;i<list.length;i++){
-            sum=sum+list[i];
+    static long calculate_avg(long[] list) {
+        long sum = 0;
+        for (int i = 0; i < list.length; i++) {
+            sum = sum + list[i];
         }
-        return sum/list.length;
+        return sum / list.length;
     }
 
     public static void main(String[] args) {
 
-//        int N = 10000000;
-//        long []result;
-//        int range=10000000;
-//        int [] numThreads=new int[]{2,12,30,46};
-//        for (int numThread:numThreads) {
-//            result=new long[10];
-//            for (int i = 0; i < 10; i++) {
-//                Tester tester = new Tester(N, range, true);
-//                result[i] = tester.testTask3(numThread, 1000000, 0.5, 0.5, 0);
-//            }
-//            System.out.println("Number of Threads "+numThread+" with avg time"+calculate_avg(result));
-//        }
+        int N = 10000000;
+        long[] result;
+        int range = 10000000;
+        int[] nThreads = new int[]{2, 12, 30, 46};
+        for (int nThread : nThreads) {
+            result = new long[10];
+            for (int i = 0; i < 10; i++) {
+                TesterGlobalLock tester = new TesterGlobalLock(nThread, N, range, true);
+                result[i] = tester.runThreads(0.5, 0.4, 0.1);
+            }
+            System.out.println("Number of Threads " + nThread + " with avg time" + calculate_avg(result));
+        }
 
-        int N = 100000;
-        TesterGlobalLock tester = new TesterGlobalLock(2, N, 100000, true);
-        tester.runThreads(0.5, 0.25, 0.25);
-        if (tester.set.verifyLog())
-            System.out.println("Log is sequentially valid");
     }
 }

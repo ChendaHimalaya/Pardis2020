@@ -43,8 +43,11 @@ public class Main {
 //        TesterGlobalLock tester = new TesterGlobalLock(2, N, 100000, true);
 //        tester.runThreads(0.5, 0.25, 0.25);
 
+//        int N = 100000;
+//        TesterLocalLog tester = new TesterLocalLog(4, N, 100000, true);
+//        tester.runThreads(0.5, 0.25, 0.25);
         int N = 100000;
-        TesterLocalLog tester = new TesterLocalLog(4, N, 100000, true);
+        TesterMPSC tester = new TesterMPSC(2, N, 100000, true);
         tester.runThreads(0.5, 0.25, 0.25);
 
 //        int N = 10000000;

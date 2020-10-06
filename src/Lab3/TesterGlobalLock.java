@@ -76,7 +76,7 @@ public class TesterGlobalLock {
 
         @Override
         public void run() {
-            System.out.println("Thread with id" + Thread.currentThread().getId());
+            //System.out.println("Thread with id" + Thread.currentThread().getId());
             int x;
             for (Integer operation : operations) {
                 if (ifUniform) x = generateUniform(range);
@@ -89,7 +89,7 @@ public class TesterGlobalLock {
                     set.contains(x);
                 }
             }
-            System.out.println("Thread with id:" + Thread.currentThread().getId() + " Has finished");
+            //System.out.println("Thread with id:" + Thread.currentThread().getId() + " Has finished");
         }
     }
 

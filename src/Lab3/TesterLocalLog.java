@@ -117,9 +117,9 @@ public class TesterLocalLog {
             e.printStackTrace();
         }
         Collections.sort(globalLog);
-        for (LogEntry<Integer> item:globalLog){
-            System.out.println(item);
-        }
+//        for (LogEntry<Integer> item:globalLog){
+//            System.out.println(item);
+//        }
         if (set.verifyLog(globalLog)) {
             System.out.println("Log is sequentially valid");
         }else{

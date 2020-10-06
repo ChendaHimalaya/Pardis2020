@@ -114,11 +114,14 @@ public class LockFreeSkipListGlobalLock<T> implements Iterable<T> {
                 }
                 boolean[] marked = {false};
                 succ = nodeToRemove.next[bottomLevel].get(marked);
+                boolean iMarkedIt;
                 while (true) {
-                    boolean iMarkedIt = nodeToRemove.next[bottomLevel].compareAndSet(
-                            succ, succ, false, true
-                    );
-                    timeStamp = System.nanoTime();
+                    synchronized (this) {
+                        iMarkedIt = nodeToRemove.next[bottomLevel].compareAndSet(
+                                succ, succ, false, true
+                        );
+                        timeStamp = System.nanoTime();
+                    }
                     succ = succs[bottomLevel].next[bottomLevel].get(marked);
                     if (iMarkedIt) {
                         find(x, preds, succs, null);
@@ -225,49 +228,47 @@ public class LockFreeSkipListGlobalLock<T> implements Iterable<T> {
                 if (entry1.ret) {
                     for (int j = i - 1; j > -1; j--) {
                         entry2 = logList.get(j);
-                        if (entry2.op.equals("add") && entry2.val == entry1.val && entry2.ret) break;
-                        if (entry2.op.equals("remove") && entry2.val == entry1.val && entry2.ret) return false;
+                        if (entry2.val.equals(entry1.val)) {
+                            if (entry2.op.equals("add") && entry2.ret) break;
+                            if (entry2.op.equals("remove") && entry2.ret) return false;
+                        }
                     }
                     assert entry2 != null;
-                    if (!(entry2.op.equals("add") && entry2.val == entry1.val && entry2.ret)) {
-                        // BUG HERE
-                        System.out.println(logList.get(0));
-                        System.out.println(entry1);
-                        System.out.println(entry2);
-                        return false;
-                    }
-                    ;
+                    if (!(entry2.op.equals("add") && entry2.val.equals(entry1.val) && entry2.ret)) return false;
                 } else {
                     for (int j = i - 1; j > -1; j--) {
                         entry2 = logList.get(j);
-                        if (entry2.op.equals("add") && entry2.val == entry1.val && entry2.ret) return false;
-                        if (entry2.op.equals("remove") && entry2.val == entry1.val && entry2.ret) break;
+                        if (entry2.val.equals(entry1.val)) {
+                            if (entry2.op.equals("add") && entry2.ret) return false;
+                            if (entry2.op.equals("remove") && entry2.ret) break;
+                        }
                     }
                 }
             } else if (entry1.op.equals("add")) {
                 if (entry1.ret) {
                     for (int j = i - 1; j > -1; j--) {
                         entry2 = logList.get(j);
-                        if (entry2.op.equals("add") && entry2.val == entry1.val && entry2.ret) return false;
-                        if (entry2.op.equals("remove") && entry2.val == entry1.val && entry2.ret) break;
-                        if (entry2.op.equals("contains") && entry2.val == entry1.val && entry2.ret) return false;
+                        if (entry2.val.equals(entry1.val)) {
+                            if (entry2.op.equals("add") && entry2.ret) return false;
+                            if (entry2.op.equals("remove") && entry2.ret) break;
+                            if (entry2.op.equals("contains") && entry2.ret) return false;
+                        }
                     }
                 } else {
                     for (int j = i - 1; j > -1; j--) {
                         entry2 = logList.get(j);
-                        if (entry2.op.equals("add") && entry2.val == entry1.val && entry2.ret) break;
-                        if (entry2.op.equals("remove") && entry2.val == entry1.val && entry2.ret) return false;
-                        if (entry2.op.equals("contains") && entry2.val == entry1.val && entry2.ret) return false;
+                        if (entry2.val.equals(entry1.val)) {
+                            if (entry2.op.equals("add") && entry2.ret) break;
+                            if (entry2.op.equals("remove") && !entry2.ret) return false;
+                            if (entry2.op.equals("contains") && !entry2.ret) return false;
+                        }
                     }
                     assert entry2 != null;
-                    if (!(entry2.op.equals("add") && entry2.val == entry1.val && entry2.ret)) {
-                        // BUG HERE
-                        System.out.println(logList.get(0));
-                        System.out.println(entry1);
-                        System.out.println(entry2);
-                        return false;
-                    }
+                    if (!(entry2.op.equals("add") && entry2.val.equals(entry1.val) && entry2.ret)) return false;
                 }
+            }
+            if (i % 10000 == 0 && i != 0) {
+                System.out.println(logList.size() - i + " entries checked");
             }
         }
         return true;

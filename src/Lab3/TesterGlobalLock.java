@@ -76,7 +76,7 @@ public class TesterGlobalLock {
 
         @Override
         public void run() {
-            System.out.println("Thread with id" + Thread.currentThread().getId());
+            //System.out.println("Thread with id" + Thread.currentThread().getId());
             int x;
             for (Integer operation : operations) {
                 if (ifUniform) x = generateUniform(range);
@@ -89,11 +89,11 @@ public class TesterGlobalLock {
                     set.contains(x);
                 }
             }
-            System.out.println("Thread with id:" + Thread.currentThread().getId() + " Has finished");
+            //System.out.println("Thread with id:" + Thread.currentThread().getId() + " Has finished");
         }
     }
 
-    public void runThreads(double addPercent, double removePercent, double containsPercent) {
+    public long runThreads(double addPercent, double removePercent, double containsPercent) {
         int addOps = (int) (N * addPercent / nThreads);
         int removeOps = (int) (N * removePercent / nThreads);
         int containsOps = (int) (N * containsPercent / nThreads);
@@ -101,6 +101,7 @@ public class TesterGlobalLock {
         for (int i = 0; i < nThreads; i++) {
             opsList[i] = generateOperations(addOps + removeOps + containsOps, addOps, removeOps, containsOps);
         }
+        long startTime = System.nanoTime();
         for (int i = 0; i < nThreads; i++) {
             pool.submit(new Task(opsList[i]));
         }
@@ -110,8 +111,7 @@ public class TesterGlobalLock {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        if (set.verifyLog()) {
-            System.out.println("Log is sequentially valid");
-        }
+        long endTime = System.nanoTime();
+        return (endTime - startTime) / 1000000;
     }
 }

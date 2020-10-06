@@ -4,10 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class TesterLocalLog {
     int nThreads;
@@ -17,12 +14,12 @@ public class TesterLocalLog {
     int N;
     int range;
     boolean ifUniform;
-    List<LogEntry<Integer>> globalLog;
+    final List<LogEntry<Integer>> globalLog;
 
     TesterLocalLog(int nThreads, int N, int range, boolean ifUniform) {
         this.nThreads = nThreads;
         pool = Executors.newFixedThreadPool(nThreads);
-        globalLog=new ArrayList<LogEntry<Integer>>();
+        globalLog = new ArrayList<>();
         set = new LockFreeSkipListLocalLog<>();
         this.N = N;
         this.range = range;
@@ -71,7 +68,7 @@ public class TesterLocalLog {
 
     class Task implements Runnable {
         private final Integer[] operations;
-        private List<LogEntry<Integer>> log=new ArrayList<LogEntry<Integer>>();
+
         Task(Integer[] ops) {
             operations = ops;
         }
@@ -79,22 +76,25 @@ public class TesterLocalLog {
         @Override
         public void run() {
             System.out.println("Thread with id" + Thread.currentThread().getId());
+            List<LogEntry<Integer>> log = new ArrayList<>();
             int x;
             for (Integer operation : operations) {
                 if (ifUniform) x = generateUniform(range);
                 else x = generateGaussian(range);
                 if (operation == 0) {
-                    LogEntry eventLog=set.add(x);
+                    LogEntry<Integer> eventLog = set.add(x);
                     log.add(eventLog);
                 } else if (operation == 1) {
-                    LogEntry eventLog=set.remove(x);
+                    LogEntry<Integer> eventLog = set.remove(x);
                     log.add(eventLog);
                 } else if (operation == 2) {
-                    LogEntry eventLog=set.contains(x);
+                    LogEntry<Integer> eventLog = set.contains(x);
                     log.add(eventLog);
                 }
             }
-            globalLog.addAll(log);
+            synchronized (globalLog) {
+                globalLog.addAll(log);
+            }
             System.out.println("Thread with id:" + Thread.currentThread().getId() + " Has finished");
         }
     }
@@ -117,12 +117,9 @@ public class TesterLocalLog {
             e.printStackTrace();
         }
         Collections.sort(globalLog);
-//        for (LogEntry<Integer> item:globalLog){
-//            System.out.println(item);
-//        }
         if (set.verifyLog(globalLog)) {
             System.out.println("Log is sequentially valid");
-        }else{
+        } else {
             System.out.println("Log is not sequentially valid");
         }
     }

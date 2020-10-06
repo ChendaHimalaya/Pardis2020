@@ -60,9 +60,9 @@ public class LockFreeSkipListLocalLog<T> implements Iterable<T> {
         Node<T>[] succs = new Node[MAX_LEVEL + 1];
         long timeStamp = -1;
         while (true) {
-            LogEntry found = find(x, preds, succs, "add");
+            LogEntry<T> found = find(x, preds, succs, "add");
             if (found.ret) {
-                return new LogEntry<>(Thread.currentThread().getId(),"add",x,false,found.timeStamp);
+                return new LogEntry<>(Thread.currentThread().getId(), "add", x, false, found.timeStamp);
             } else {
                 Node<T> newNode = new Node<>(x, topLevel);
                 for (int level = bottomLevel; level <= topLevel; level++) {
@@ -86,9 +86,7 @@ public class LockFreeSkipListLocalLog<T> implements Iterable<T> {
                         find(x, preds, succs, null);
                     }
                 }
-                //og.add(new LogEntry<>(Thread.currentThread().getId(), "add", x, true, timeStamp));
-                //return true;
-                return new LogEntry<>(Thread.currentThread().getId(),"add",x,true,timeStamp);
+                return new LogEntry<>(Thread.currentThread().getId(), "add", x, true, timeStamp);
             }
         }
     }
@@ -100,9 +98,9 @@ public class LockFreeSkipListLocalLog<T> implements Iterable<T> {
         Node<T> succ;
         long timeStamp = -1;
         while (true) {
-            LogEntry found = find(x, preds, succs, "remove");
+            LogEntry<T> found = find(x, preds, succs, "remove");
             if (!found.ret) {
-                return new LogEntry<>(Thread.currentThread().getId(),"remove",x,false,found.timeStamp);
+                return new LogEntry<>(Thread.currentThread().getId(), "remove", x, false, found.timeStamp);
             } else {
                 Node<T> nodeToRemove = succs[bottomLevel];
                 for (int level = nodeToRemove.topLevel; level >= bottomLevel + 1; level--) {
@@ -123,13 +121,9 @@ public class LockFreeSkipListLocalLog<T> implements Iterable<T> {
                     succ = succs[bottomLevel].next[bottomLevel].get(marked);
                     if (iMarkedIt) {
                         find(x, preds, succs, null);
-//                        log.add(new LogEntry<>(Thread.currentThread().getId(), "remove", x, true, timeStamp));
-//                        return true;
-                        return new LogEntry<>(Thread.currentThread().getId(),"remove",x,true,timeStamp);
+                        return new LogEntry<>(Thread.currentThread().getId(), "remove", x, true, timeStamp);
                     } else if (marked[0]) {
-//                        log.add(new LogEntry<>(Thread.currentThread().getId(), "remove", x, false, timeStamp));
-//                        return false;
-                        return new LogEntry<>(Thread.currentThread().getId(),"remove",x,false,timeStamp);
+                        return new LogEntry<>(Thread.currentThread().getId(), "remove", x, false, timeStamp);
                     }
                 }
             }
@@ -172,16 +166,7 @@ public class LockFreeSkipListLocalLog<T> implements Iterable<T> {
                 preds[level] = pred;
                 succs[level] = curr;
             }
-//            if (caller != null) {
-//                if (curr.key == key && caller.equals("add"))
-//                    //log.add(new LogEntry<>(Thread.currentThread().getId(), "add", x, false, timeStamp));
-//                    return new LogEntry<>(Thread.currentThread().getId(),"add",x,false,timeStamp);
-//                else if (curr.key != key && caller.equals("remove"))
-//                    return new LogEntry<>(Thread.currentThread().getId(),"remove",x,false,timeStamp);
-//                    //log.add(new LogEntry<>(Thread.currentThread().getId(), "remove", x, false, timeStamp));
-//            }
-            //return curr.key == key;
-            return new LogEntry<>(Thread.currentThread().getId(),"find",x,curr.key==key,timeStamp);
+            return new LogEntry<>(Thread.currentThread().getId(), "find", x, curr.key == key, timeStamp);
         }
     }
 
@@ -213,15 +198,10 @@ public class LockFreeSkipListLocalLog<T> implements Iterable<T> {
                 }
             }
         }
-//        if (curr.key == v)
-//            log.add(new LogEntry<>(Thread.currentThread().getId(), "contains", x, true, timeStamp));
-//        else
-//            log.add(new LogEntry<>(Thread.currentThread().getId(), "contains", x, false, timeStamp));
-        return new LogEntry<>(Thread.currentThread().getId(),"contains",x,curr.key==v,timeStamp);
+        return new LogEntry<>(Thread.currentThread().getId(), "contains", x, curr.key == v, timeStamp);
     }
 
     boolean verifyLog(List<LogEntry<T>> logList) {
-//        List<LogEntry<T>> logList = new ArrayList<>(log);
         Collections.sort(logList);
         LogEntry<T> entry1;
         LogEntry<T> entry2 = null;
